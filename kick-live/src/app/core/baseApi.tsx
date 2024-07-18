@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const BASE_API = 'http://127.0.0.1:8000/';
+const BASE_API = 'https://kick-live.onrender.com/';
 
 const baseApi = axios.create({
     baseURL: BASE_API,
