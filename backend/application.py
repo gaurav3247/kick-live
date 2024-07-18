@@ -20,10 +20,6 @@ config = {
     "DEBUG": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_DEFAULT_TIMEOUT": 300,
-    "CACHE_REDIS_HOST": os.getenv('REDIS_HOST'),
-    "CACHE_REDIS_PORT": os.getenv('REDIS_PORT'),
-    "CACHE_REDIS_DB": os.getenv('REDIS_DB'),
-    "CACHE_REDIS_USER": os.getenv('REDIS_USER'),
     "CACHE_REDIS_PASSWORD": os.getenv('REDIS_PASSWORD'),
     "CACHE_REDIS_URL": os.getenv('REDIS_URL')
 }
