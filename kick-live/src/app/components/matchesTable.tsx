@@ -1,11 +1,17 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { Box, Button, Link, Typography } from '@mui/material';
+import { Box, Button, Link, Menu, Typography, MenuItem, Modal, backdropClasses } from '@mui/material';
 import { Avatar } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { KeyboardArrowDown } from '@mui/icons-material';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { Dropdown } from '@mui/base/Dropdown';
+import { MenuButton } from '@mui/base/MenuButton';
 
 import baseApi from '../core/baseApi';
 
@@ -58,6 +64,15 @@ interface Matches {
     };
 }
 
+function displayDate(date: Date) {
+    const options = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+    };
+
+    return date.toLocaleDateString(undefined, options);
+}
 
 function formatDate(date: Date) {
     const offset = date.getTimezoneOffset();
@@ -138,10 +153,10 @@ function LeagueMatchesTable({ league, matches }: { league: Competition, matches:
                 borderRadius: '5px',
                 marginBottom: '5px',
                 backgroundColor: '#f5f5f5',
-                paddingLeft: '10px 10px',
+                paddingLeft: '10px',
                 boxSizing: 'border-box',
             }}>
-                <Avatar src={league.emblem} sx={{ width: 28, height: 28 }}/>
+                <Avatar src={league.emblem} sx={{ width: 28, height: 28 }} variant='square'/>
                 <Typography
                 sx={{
                     fontSize: {
@@ -259,12 +274,24 @@ function LeagueMatchesTable({ league, matches }: { league: Competition, matches:
     );
 }
 
+// const Calendar = () => {
+//     return (
+//         <Dropdown>
+//             <LocalizationProvider dateAdapter={AdapterDayjs}>
+//                 <DateCalendar onChange={(newValue) => }/>
+//             </LocalizationProvider>
+//         </Dropdown>
+//     );
+// }
+
 export default function MatchesTable() {
     const [matches, setMatches] = useState<Matches>({});
     const [date, setDate] = useState(new Date());
     const [isLoading, setIsLoading] = useState(true);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     useEffect(() => {
+        console.log('date', date);
         const formattedDate = formatDate(date);
         let timeZone = sessionStorage.getItem('timeZone');
         if (timeZone === null) {
@@ -281,6 +308,12 @@ export default function MatchesTable() {
             setIsLoading(false);
         });
     }, [date]);
+
+    const handleDateChange = (newDate) => {
+        setDate(newDate.$d);
+        setIsCalendarOpen(false);
+        setIsLoading(true);
+    };
 
     return (
         <>
@@ -303,8 +336,41 @@ export default function MatchesTable() {
                         <KeyboardArrowLeftIcon />
                     </IconButton>
                 </Box>
-                <Box>
-                    <h2>{formatDate(date)}</h2>
+                <Box sx={{ display: 'flex' }}>
+                        <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                '&:hover': {
+                                    cursor: 'pointer',
+                                    color: 'primary.main',
+                                },
+                            }}
+                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                        >
+                            <h2>{displayDate(date)}</h2>
+                            <KeyboardArrowDown />
+                        </Box>
+                        <Modal
+                            open={isCalendarOpen}
+                            onClose={() => {setIsCalendarOpen(false)}}>
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    bgcolor: 'background.paper',
+                                    borderRadius: 2,
+                                }}
+                            >
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateCalendar
+                                        onChange={handleDateChange}
+                                    />
+                                </LocalizationProvider>
+                            </Box>
+                        </Modal>
                 </Box>
                 <Box>
                     <IconButton onClick={() => {setDate(new Date(date.getTime() + 24 * 60 * 60 * 1000)); setIsLoading(true)}}>
