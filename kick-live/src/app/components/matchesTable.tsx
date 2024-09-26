@@ -65,7 +65,7 @@ interface Matches {
 }
 
 function displayDate(date: Date) {
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
@@ -309,7 +309,7 @@ export default function MatchesTable() {
         });
     }, [date]);
 
-    const handleDateChange = (newDate) => {
+    const handleDateChange = (newDate: any) => {
         setDate(newDate.$d);
         setIsCalendarOpen(false);
         setIsLoading(true);
